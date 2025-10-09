@@ -1,37 +1,42 @@
+﻿using System;
+using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using MotoApi.Models;
 
 namespace MotoApi.Data;
 
-public class ApplicationDbContext : DbContext
-{
-    public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
+public partial class ApplicationDbContext : DbContext
+{   
+    private readonly string _connectionString;
+
+    public ApplicationDbContext(string connectionString)
+    {
+        _connectionString = connectionString;
+    }
+    
+  public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
+        : base(options)
     {
     }
+    public virtual DbSet<Moto> Motos { get; set; }
 
-    public DbSet<Moto> Motos { get; set; }
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        => optionsBuilder.UseNpgsql(_connectionString);
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        base.OnModelCreating(modelBuilder);
-
-        
         modelBuilder.Entity<Moto>(entity =>
         {
             entity.HasKey(e => e.Identificador);
-            
-            entity.Property(e => e.Modelo)
-                .IsRequired()
-                .HasMaxLength(100);
-                
-            entity.Property(e => e.Placa)
-                .IsRequired()
-                .HasMaxLength(20);
 
-           // unique Placa
-            entity.HasIndex(e => e.Placa)
-                .IsUnique()
-                .HasDatabaseName("IX_Motos_Placa_Unique");
+            entity.HasIndex(e => e.Placa, "IX_Motos_Placa").IsUnique();
+
+            entity.Property(e => e.Modelo).HasMaxLength(100);
+            entity.Property(e => e.Placa).HasMaxLength(7);
         });
+
+        OnModelCreatingPartial(modelBuilder);
     }
+
+    partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
 }
