@@ -6,22 +6,13 @@ using MotoApi.Models;
 namespace MotoApi.Data;
 
 public partial class ApplicationDbContext : DbContext
-{   
-    private readonly string _connectionString;
-
-    public ApplicationDbContext(string connectionString)
-    {
-        _connectionString = connectionString;
-    }
-    
-  public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
+{
+    public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
         : base(options)
     {
     }
+    
     public virtual DbSet<Moto> Motos { get; set; }
-
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        => optionsBuilder.UseNpgsql(_connectionString);
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
