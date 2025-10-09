@@ -15,6 +15,6 @@ public class Moto
     public string Modelo { get; set; } = string.Empty;
     
     [Required]
-    [StringLength(20)]
+    [StringLength(7)]
     public string Placa { get; set; } = string.Empty;
 }
