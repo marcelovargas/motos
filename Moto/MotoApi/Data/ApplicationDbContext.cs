@@ -22,8 +22,9 @@ public partial class ApplicationDbContext : DbContext
 
             entity.HasIndex(e => e.Placa, "IX_Motos_Placa").IsUnique();
 
+            entity.Property(e => e.Identificador).HasColumnType("varchar(50)"); // Define explicitamente como varchar
             entity.Property(e => e.Modelo).HasMaxLength(100);
-            entity.Property(e => e.Placa).HasMaxLength(7);
+            entity.Property(e => e.Placa).HasMaxLength(8);
         });
 
         OnModelCreatingPartial(modelBuilder);

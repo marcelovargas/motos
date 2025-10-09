@@ -5,5 +5,5 @@ namespace MotoApi.Services.Interfaces;
 public interface IMotoService
 {
     Task<Moto> CreateMotoAsync(Moto moto);
-    Task<Moto?> GetMotoByIdAsync(int id);
+    Task<Moto?> GetMotoByIdAsync(string id);
 }

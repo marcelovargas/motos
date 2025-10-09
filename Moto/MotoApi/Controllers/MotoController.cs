@@ -38,7 +38,7 @@ namespace MotoApi.Controllers
 
         // GET: api/Moto/{id}
         [HttpGet("{id}")]
-        public async Task<ActionResult<Moto>> GetMotoById(int id)
+        public async Task<ActionResult<Moto>> GetMotoById(string id)
         {
             var moto = await _motoService.GetMotoByIdAsync(id);
 

@@ -21,7 +21,7 @@ public class MotoRepository : IMotoRepository
         return moto;
     }
 
-    public async Task<Moto?> GetMotoByIdAsync(int id)
+    public async Task<Moto?> GetMotoByIdAsync(string id)
     {
         return await _context.Motos.FindAsync(id);
     }
