@@ -9,9 +9,82 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="obj\Debug\net9.0\.NETCoreApp,Version=v9.0.AssemblyAttributes.cs" />
+    <Compile Include="obj\Debug\net9.0\MotoApi.AssemblyInfo.cs" />
+    <Compile Include="obj\Debug\net9.0\MotoApi.GlobalUsings.g.cs" />
+    <Compile Include="obj\Debug\net9.0\MotoApi.MvcApplicationPartsAssemblyInfo.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="obj\Debug\net9.0\ApiEndpoints.json" />
+    <Content Include="obj\Debug\net9.0\MotoApi.csproj.FileListAbsolute.txt" />
+    <Content Include="obj\Debug\net9.0\MotoApi.sourcelink.json" />
+    <Content Include="obj\Debug\net9.0\rjsmcshtml.dswa.cache.json" />
+    <Content Include="obj\Debug\net9.0\rjsmrazor.dswa.cache.json" />
+    <Content Include="obj\Debug\net9.0\rpswa.dswa.cache.json" />
+    <Content Include="obj\Debug\net9.0\staticwebassets.build.endpoints.json" />
+    <Content Include="obj\Debug\net9.0\staticwebassets.build.json" />
+    <Content Include="obj\Debug\net9.0\staticwebassets.references.upToDateCheck.txt" />
+    <Content Include="obj\Debug\net9.0\staticwebassets.removed.txt" />
+    <Content Include="obj\MotoApi.csproj.nuget.dgspec.json" />
+    <Content Include="obj\project.assets.json" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.9" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.23.0" />
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.0.4" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Data\" />
+    <Folder Include="DTOs\Request\" />
+    <Folder Include="DTOs\Response\" />
+    <Folder Include="Models\" />
+    <Folder Include="obj\Debug\net9.0\staticwebassets\" />
+    <Folder Include="Repositories\Interfaces\" />
+    <Folder Include="Services\Interfaces\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="obj\Container\AdditionalProbingPaths.cache" />
+    <None Include="obj\Container\ContainerDevelopmentMode.cache" />
+    <None Include="obj\Container\ContainerId.cache" />
+    <None Include="obj\Container\ContainerName.cache" />
+    <None Include="obj\Container\ContainerOperatingSystemFlavor.cache" />
+    <None Include="obj\Container\ContainerRunContext.cache" />
+    <None Include="obj\Container\DebuggeeArguments.cache" />
+    <None Include="obj\Container\DebuggeeKillProcessCommand.cache" />
+    <None Include="obj\Container\DebuggeeProgram.cache" />
+    <None Include="obj\Container\DebuggeeWorkingDirectory.cache" />
+    <None Include="obj\Container\DistrolessHelperSupported.cache" />
+    <None Include="obj\Container\FastModeProjectMountDirectory.cache" />
+    <None Include="obj\Container\ImageBuildContext.cache" />
+    <None Include="obj\Container\ImageId.cache" />
+    <None Include="obj\Container\OperatingSystemName.cache" />
+    <None Include="obj\Container\TargetFramework.cache" />
+    <None Include="obj\Container\VolumeMappings.cache" />
+    <None Include="obj\Container\VolumeMappings2.cache" />
+    <None Include="obj\Container\VsDbgScript.cache" />
+    <None Include="obj\Debug\net9.0\apphost.exe" />
+    <None Include="obj\Debug\net9.0\MotoApi.AssemblyInfoInputs.cache" />
+    <None Include="obj\Debug\net9.0\MotoApi.assets.cache" />
+    <None Include="obj\Debug\net9.0\MotoApi.csproj.AssemblyReference.cache" />
+    <None Include="obj\Debug\net9.0\MotoApi.csproj.BuildWithSkipAnalyzers" />
+    <None Include="obj\Debug\net9.0\MotoApi.csproj.CoreCompileInputs.cache" />
+    <None Include="obj\Debug\net9.0\MotoApi.csproj.Up2Date" />
+    <None Include="obj\Debug\net9.0\MotoApi.dll" />
+    <None Include="obj\Debug\net9.0\MotoApi.GeneratedMSBuildEditorConfig.editorconfig" />
+    <None Include="obj\Debug\net9.0\MotoApi.genruntimeconfig.cache" />
+    <None Include="obj\Debug\net9.0\MotoApi.MvcApplicationPartsAssemblyInfo.cache" />
+    <None Include="obj\Debug\net9.0\MotoApi.pdb" />
+    <None Include="obj\Debug\net9.0\refint\MotoApi.dll" />
+    <None Include="obj\Debug\net9.0\ref\MotoApi.dll" />
+    <None Include="obj\Debug\net9.0\staticwebassets.build.json.cache" />
+    <None Include="obj\Debug\net9.0\swae.build.ex.cache" />
+    <None Include="obj\MotoApi.csproj.nuget.g.props" />
+    <None Include="obj\MotoApi.csproj.nuget.g.targets" />
+    <None Include="obj\project.nuget.cache" />
   </ItemGroup>
 
 </Project>
