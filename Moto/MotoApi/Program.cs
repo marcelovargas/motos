@@ -14,6 +14,8 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 // Register repository and service
 builder.Services.AddScoped<IMotoRepository, MotoRepository>();
 builder.Services.AddScoped<IMotoService, MotoService>();
+builder.Services.AddScoped<IEntregadorRepository, EntregadorRepository>();
+builder.Services.AddScoped<IEntregadorService, EntregadorService>();
 
 builder.Services.AddControllers();
 
