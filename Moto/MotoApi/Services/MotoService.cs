@@ -41,4 +41,14 @@ public class MotoService : IMotoService
 
         return await _motoRepository.GetMotosAsync(filter);
     }
+
+    public async Task<bool> DeleteMotoAsync(string id)
+    {
+        if (string.IsNullOrEmpty(id))
+        {
+            throw new ArgumentException("Invalid identifier");
+        }
+
+        return await _motoRepository.DeleteMotoAsync(id);
+    }
 }

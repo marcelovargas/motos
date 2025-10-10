@@ -9,4 +9,5 @@ public interface IMotoRepository
     Task<Moto?> GetMotoByIdAsync(string id);
     Task<bool> MotoExistsByPlacaAsync(string placa);
     Task<IEnumerable<Moto>> GetMotosAsync(Expression<Func<Moto, bool>>? filter = null);
+    Task<bool> DeleteMotoAsync(string id);
 }

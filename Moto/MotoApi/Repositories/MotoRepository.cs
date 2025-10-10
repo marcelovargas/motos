@@ -43,4 +43,17 @@ public class MotoRepository : IMotoRepository
 
         return await query.ToListAsync();
     }
+
+    public async Task<bool> DeleteMotoAsync(string id)
+    {
+        var moto = await _context.Motos.FindAsync(id);
+        if (moto == null)
+        {
+            return false;
+        }
+
+        _context.Motos.Remove(moto);
+        var result = await _context.SaveChangesAsync();
+        return result > 0;
+    }
 }

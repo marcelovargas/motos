@@ -106,5 +106,45 @@ namespace MotoApi.Controllers
                 return BadRequest(new DTOs.Response.ErrorResponseDto { mensagem = "Request mal formada" });
             }
         }
+
+        
+        [HttpDelete("{id}")]
+        [ProducesResponseType(typeof(DTOs.Response.ErrorResponseDto), 200)]
+        [ProducesResponseType(typeof(DTOs.Response.ErrorResponseDto), 400)]
+        [SwaggerOperation(
+            Summary = "Elimina uma moto",
+            Description = "Remove uma moto existente pelo identificador"
+        )]
+        [SwaggerResponse(200, "Moto eliminada com sucesso", typeof(DTOs.Response.ErrorResponseDto))]
+        [SwaggerResponse(400, "Dados inválidos", typeof(DTOs.Response.ErrorResponseDto))]
+        public async Task<IActionResult> DeleteMoto(string id)
+        {
+            if (string.IsNullOrEmpty(id))
+            {
+                return BadRequest(new DTOs.Response.ErrorResponseDto { mensagem = "Dados inválidos" });
+            }
+
+            try
+            {
+                var deleted = await _motoService.DeleteMotoAsync(id);
+                
+                if (deleted)
+                {
+                    return Ok(new DTOs.Response.ErrorResponseDto { mensagem = "Moto eliminada com sucesso" });
+                }
+                else
+                {
+                    return BadRequest(new DTOs.Response.ErrorResponseDto { mensagem = "Dados inválidos" });
+                }
+            }
+            catch (ArgumentException)
+            {
+                return BadRequest(new DTOs.Response.ErrorResponseDto { mensagem = "Dados inválidos" });
+            }
+            catch
+            {
+                return BadRequest(new DTOs.Response.ErrorResponseDto { mensagem = "Dados inválidos" });
+            }
+        }
     }
 }
