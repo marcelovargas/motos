@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using MotoApi.Models;
 using MotoApi.Services.Interfaces;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace MotoApi.Controllers
 {
@@ -15,36 +16,69 @@ namespace MotoApi.Controllers
             _motoService = motoService;
         }
 
-        // POST: api/Moto
+       
         [HttpPost]
-        public async Task<ActionResult<Moto>> CreateMoto(Moto moto)
+        [ProducesResponseType(typeof(Moto), 201)]
+        [ProducesResponseType(typeof(DTOs.Response.ErrorResponseDto), 400)]
+        [SwaggerOperation(
+            Summary = "Cria uma nova moto",
+            Description = "Adiciona uma nova moto ao sistema com os dados fornecidos"
+        )]
+        [SwaggerResponse(201, "Moto criada com sucesso", typeof(Moto))]
+        [SwaggerResponse(400, "Dados inválidos", typeof(DTOs.Response.ErrorResponseDto))]
+        public async Task<IActionResult> CreateMoto(Moto moto)
         {
             // Validate the input
             if (moto == null)
             {
-                return BadRequest("Moto data is required.");
+                return BadRequest(new DTOs.Response.ErrorResponseDto { mensagem = "Dados inválidos" });
             }
 
             try
             {
+                // Validate model state
+                if (!ModelState.IsValid)
+                {
+                    return BadRequest(new DTOs.Response.ErrorResponseDto { mensagem = "Dados inválidos" });
+                }
+
                 var createdMoto = await _motoService.CreateMotoAsync(moto);
                 return CreatedAtAction(nameof(GetMotoById), new { id = createdMoto.Identificador }, createdMoto);
             }
-            catch (ArgumentException ex)
+            catch (ArgumentException)
             {
-                return BadRequest(ex.Message);
+                return BadRequest(new DTOs.Response.ErrorResponseDto { mensagem = "Deu algum problema" });
+            }
+            catch
+            {
+                return BadRequest(new DTOs.Response.ErrorResponseDto { mensagem = "Deu algum problema" });
             }
         }
 
-        // GET: api/Moto/{id}
+       
         [HttpGet("{id}")]
+        [ProducesResponseType(typeof(Moto), 200)]
+        [ProducesResponseType(typeof(DTOs.Response.ErrorResponseDto), 400)]
+        [ProducesResponseType(typeof(DTOs.Response.ErrorResponseDto), 404)]
+        [SwaggerOperation(
+            Summary = "Busca moto por identificador",
+            Description = "Retorna os dados de uma moto específica baseado no identificador fornecido"
+        )]
+        [SwaggerResponse(200, "Moto encontrada", typeof(Moto))]
+        [SwaggerResponse(400, "Request mal formada", typeof(DTOs.Response.ErrorResponseDto))]
+        [SwaggerResponse(404, "Moto não encontrada", typeof(DTOs.Response.ErrorResponseDto))]
         public async Task<ActionResult<Moto>> GetMotoById(string id)
         {
+            if (string.IsNullOrEmpty(id))
+            {
+                return BadRequest(new DTOs.Response.ErrorResponseDto { mensagem = "Request mal formada" });
+            }
+
             var moto = await _motoService.GetMotoByIdAsync(id);
 
             if (moto == null)
             {
-                return NotFound();
+                return NotFound(new DTOs.Response.ErrorResponseDto { mensagem = "Moto não encontrada" });
             }
 
             return moto;
