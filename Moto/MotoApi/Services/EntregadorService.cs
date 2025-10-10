@@ -18,17 +18,22 @@ public class EntregadorService : IEntregadorService
         // Check if an entregador with the same CNPJ already exists
         if (await _entregadorRepository.EntregadorExistsByCnpjAsync(entregador.Cnpj))
         {
-            throw new ArgumentException("Entregado not exits");
+            throw new ArgumentException("Dados inválidos");
         }
 
         // Check if an entregador with the same CNH number already exists
         if (await _entregadorRepository.EntregadorExistsByNumeroCnhAsync(entregador.NumeroCnh))
         {
-            throw new ArgumentException("Entregador not exists");
+            throw new ArgumentException("Dados inválidos");
         }
 
-       
+        
 
         return await _entregadorRepository.CreateEntregadorAsync(entregador);
+    }
+
+    public async Task<bool> UpdateEntregadorCnhImageAsync(string id, string cnhImagePath)
+    {
+        return await _entregadorRepository.UpdateEntregadorCnhImageAsync(id, cnhImagePath);
     }
 }

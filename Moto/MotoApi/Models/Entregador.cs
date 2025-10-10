@@ -56,8 +56,8 @@ public class Entregador
     public string TipoCnh { get; set; } = string.Empty;
     
     /// <summary>
-    /// Image of the CNH
+    /// Path to the CNH image file (stored locally)
     /// </summary>
-    
+    [Required]
     public string ImagemCnh { get; set; } = string.Empty;
 }

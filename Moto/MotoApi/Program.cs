@@ -16,6 +16,7 @@ builder.Services.AddScoped<IMotoRepository, MotoRepository>();
 builder.Services.AddScoped<IMotoService, MotoService>();
 builder.Services.AddScoped<IEntregadorRepository, EntregadorRepository>();
 builder.Services.AddScoped<IEntregadorService, EntregadorService>();
+builder.Services.AddScoped<IFileStorageService, FileStorageService>();
 
 builder.Services.AddControllers();
 

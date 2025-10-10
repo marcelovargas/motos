@@ -21,6 +21,11 @@ public class EntregadorRepository : IEntregadorRepository
         return entregador;
     }
 
+    public async Task<Entregador?> GetEntregadorByIdAsync(string id)
+    {
+        return await _context.Entregadores.FirstOrDefaultAsync(e => e.Identificador == id);
+    }
+
     public async Task<bool> EntregadorExistsByCnpjAsync(string cnpj)
     {
         return await _context.Entregadores.AnyAsync(e => e.Cnpj == cnpj);
@@ -29,5 +34,18 @@ public class EntregadorRepository : IEntregadorRepository
     public async Task<bool> EntregadorExistsByNumeroCnhAsync(string numeroCnh)
     {
         return await _context.Entregadores.AnyAsync(e => e.NumeroCnh == numeroCnh);
+    }
+
+    public async Task<bool> UpdateEntregadorCnhImageAsync(string id, string cnhImagePath)
+    {
+        var entregador = await _context.Entregadores.FirstOrDefaultAsync(e => e.Identificador == id);
+        if (entregador == null)
+        {
+            return false;
+        }
+
+        entregador.ImagemCnh = cnhImagePath;
+        var result = await _context.SaveChangesAsync();
+        return result > 0;
     }
 }
