@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using MotoApi.Data;
 using MotoApi.Models;
 using MotoApi.Repositories.Interfaces;
+using System.Linq.Expressions;
 
 namespace MotoApi.Repositories;
 
@@ -29,5 +30,17 @@ public class MotoRepository : IMotoRepository
     public async Task<bool> MotoExistsByPlacaAsync(string placa)
     {
         return await _context.Motos.AnyAsync(m => m.Placa == placa);
+    }
+
+    public async Task<IEnumerable<Moto>> GetMotosAsync(Expression<Func<Moto, bool>>? filter = null)
+    {
+        IQueryable<Moto> query = _context.Motos;
+
+        if (filter != null)
+        {
+            query = query.Where(filter);
+        }
+
+        return await query.ToListAsync();
     }
 }

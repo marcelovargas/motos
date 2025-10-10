@@ -7,11 +7,11 @@ namespace MotoApi.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class MotoController : ControllerBase
+    public class MotosController : ControllerBase
     {
         private readonly IMotoService _motoService;
 
-        public MotoController(IMotoService motoService)
+        public MotosController(IMotoService motoService)
         {
             _motoService = motoService;
         }
@@ -82,6 +82,29 @@ namespace MotoApi.Controllers
             }
 
             return moto;
+        }
+
+        
+        [HttpGet]
+        [ProducesResponseType(typeof(IEnumerable<Moto>), 200)]
+        [ProducesResponseType(typeof(DTOs.Response.ErrorResponseDto), 400)]
+        [SwaggerOperation(
+            Summary = "Consulta motos existentes",
+            Description = "Retorna uma lista de motos, com opção de filtrar pela placa"
+        )]
+        [SwaggerResponse(200, "Lista de motos retornada com sucesso", typeof(IEnumerable<Moto>))]
+        [SwaggerResponse(400, "Request mal formada", typeof(DTOs.Response.ErrorResponseDto))]
+        public async Task<ActionResult<IEnumerable<Moto>>> GetMotos([FromQuery] string? placa = null)
+        {
+            try
+            {
+                var motos = await _motoService.GetMotosAsync(placa);
+                return Ok(motos);
+            }
+            catch (Exception)
+            {
+                return BadRequest(new DTOs.Response.ErrorResponseDto { mensagem = "Request mal formada" });
+            }
         }
     }
 }
