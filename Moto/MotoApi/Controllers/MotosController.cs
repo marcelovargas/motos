@@ -16,7 +16,7 @@ namespace MotoApi.Controllers
             _motoService = motoService;
         }
 
-       
+
         [HttpPost]
         [ProducesResponseType(typeof(Moto), 201)]
         [ProducesResponseType(typeof(DTOs.Response.ErrorResponseDto), 400)]
@@ -55,15 +55,14 @@ namespace MotoApi.Controllers
             }
         }
 
-       
+
         [HttpGet("{id}")]
         [ProducesResponseType(typeof(Moto), 200)]
         [ProducesResponseType(typeof(DTOs.Response.ErrorResponseDto), 400)]
         [ProducesResponseType(typeof(DTOs.Response.ErrorResponseDto), 404)]
         [SwaggerOperation(
-            Summary = "Busca moto por identificador",
-            Description = "Retorna os dados de uma moto específica baseado no identificador fornecido"
-        )]
+            Summary = "Busca moto por identificador"
+                    )]
         [SwaggerResponse(200, "Moto encontrada", typeof(Moto))]
         [SwaggerResponse(400, "Request mal formada", typeof(DTOs.Response.ErrorResponseDto))]
         [SwaggerResponse(404, "Moto não encontrada", typeof(DTOs.Response.ErrorResponseDto))]
@@ -84,7 +83,7 @@ namespace MotoApi.Controllers
             return moto;
         }
 
-        
+
         [HttpGet]
         [ProducesResponseType(typeof(IEnumerable<Moto>), 200)]
         [ProducesResponseType(typeof(DTOs.Response.ErrorResponseDto), 400)]
@@ -107,7 +106,7 @@ namespace MotoApi.Controllers
             }
         }
 
-        
+
         [HttpDelete("{id}")]
         [ProducesResponseType(typeof(DTOs.Response.ErrorResponseDto), 200)]
         [ProducesResponseType(typeof(DTOs.Response.ErrorResponseDto), 400)]
@@ -127,10 +126,49 @@ namespace MotoApi.Controllers
             try
             {
                 var deleted = await _motoService.DeleteMotoAsync(id);
-                
+
                 if (deleted)
                 {
                     return Ok(new DTOs.Response.ErrorResponseDto { mensagem = "Moto eliminada com sucesso" });
+                }
+                else
+                {
+                    return BadRequest(new DTOs.Response.ErrorResponseDto { mensagem = "Dados inválidos" });
+                }
+            }
+            catch (ArgumentException)
+            {
+                return BadRequest(new DTOs.Response.ErrorResponseDto { mensagem = "Dados inválidos" });
+            }
+            catch
+            {
+                return BadRequest(new DTOs.Response.ErrorResponseDto { mensagem = "Dados inválidos" });
+            }
+        }
+
+
+        [HttpPut("{id}/placa")]
+        [ProducesResponseType(typeof(DTOs.Response.ErrorResponseDto), 200)]
+        [ProducesResponseType(typeof(DTOs.Response.ErrorResponseDto), 400)]
+        [SwaggerOperation(
+            Summary = "Modifica a placa de uma moto"
+        )]
+        [SwaggerResponse(200, "Placa atualizada com sucesso", typeof(DTOs.Response.ErrorResponseDto))]
+        [SwaggerResponse(400, "Dados inválidos", typeof(DTOs.Response.ErrorResponseDto))]
+        public async Task<IActionResult> UpdateMotoPlaca(string id, [FromBody] DTOs.Request.PlacaUpdateRequest request)
+        {
+            if (string.IsNullOrEmpty(id) || request?.Placa == null)
+            {
+                return BadRequest(new DTOs.Response.ErrorResponseDto { mensagem = "Dados inválidos" });
+            }
+
+            try
+            {
+                var updated = await _motoService.UpdateMotoPlacaAsync(id, request.Placa);
+
+                if (updated)
+                {
+                    return Ok(new DTOs.Response.ErrorResponseDto { mensagem = "Placa atualizada com sucesso" });
                 }
                 else
                 {

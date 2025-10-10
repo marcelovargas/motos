@@ -42,6 +42,29 @@ public class MotoService : IMotoService
         return await _motoRepository.GetMotosAsync(filter);
     }
 
+    public async Task<bool> UpdateMotoPlacaAsync(string id, string placa)
+    {
+        if (string.IsNullOrEmpty(id) || string.IsNullOrEmpty(placa))
+        {
+            throw new ArgumentException("Dados inválidos");
+        }
+
+        
+        var regex = new System.Text.RegularExpressions.Regex(@"^[A-Z]{3}-\d{4}$|^[A-Z]{3}-\d[A-Z]\d{2}$");
+        if (!regex.IsMatch(placa))
+        {
+            throw new ArgumentException("Dados inválidos");
+        }
+
+        // Check if another moto already has this plate
+        if (await _motoRepository.MotoExistsByPlacaAsync(placa))
+        {
+            throw new ArgumentException("Dados inválidos");
+        }
+
+        return await _motoRepository.UpdateMotoPlacaAsync(id, placa);
+    }
+
     public async Task<bool> DeleteMotoAsync(string id)
     {
         if (string.IsNullOrEmpty(id))
