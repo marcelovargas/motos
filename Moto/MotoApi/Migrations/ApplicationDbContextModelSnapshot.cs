@@ -65,6 +65,34 @@ namespace MotoApi.Migrations
                     b.ToTable("Entregadores");
                 });
 
+            modelBuilder.Entity("MotoApi.Models.Locacao", b =>
+                {
+                    b.Property<string>("EntregadorId")
+                        .HasColumnType("varchar(50)")
+                        .HasColumnOrder(0);
+
+                    b.Property<string>("MotoId")
+                        .HasColumnType("varchar(50)")
+                        .HasColumnOrder(1);
+
+                    b.Property<DateTime>("DataInicio")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnOrder(2);
+
+                    b.Property<DateTime>("DataPrevisaoTermino")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime>("DataTermino")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("Plano")
+                        .HasColumnType("integer");
+
+                    b.HasKey("EntregadorId", "MotoId", "DataInicio");
+
+                    b.ToTable("Locacoes");
+                });
+
             modelBuilder.Entity("MotoApi.Models.Moto", b =>
                 {
                     b.Property<string>("Identificador")
