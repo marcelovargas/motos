@@ -65,6 +65,52 @@ namespace MotoApi.Migrations
                     b.ToTable("Entregadores");
                 });
 
+            modelBuilder.Entity("MotoApi.Models.Locacao", b =>
+                {
+                    b.Property<string>("Identificador")
+                        .HasColumnType("varchar(50)");
+
+                    b.Property<string>("EntregadorId")
+                        .IsRequired()
+                        .HasColumnType("varchar(50)");
+
+                    b.Property<DateTime>("DataInicio")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime?>("DataTermino")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime>("DataPrevisaoTermino")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("MotoId")
+                        .IsRequired()
+                        .HasColumnType("varchar(50)");
+
+                    b.Property<int>("Plano")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Identificador");
+
+                    b.HasIndex(new[] { "EntregadorId" }, "IX_Locacoes_EntregadorId");
+
+                    b.HasIndex(new[] { "MotoId" }, "IX_Locacoes_MotoId");
+
+                    b.ToTable("Locacoes");
+
+                    b.HasOne("MotoApi.Models.Entregador", "Entregador")
+                        .WithMany("Locacoes")
+                        .HasForeignKey("EntregadorId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .HasConstraintName("FK_Locacoes_Entregadores_EntregadorId");
+
+                    b.HasOne("MotoApi.Models.Moto", "Moto")
+                        .WithMany("Locacoes")
+                        .HasForeignKey("MotoId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .HasConstraintName("FK_Locacoes_Motos_MotoId");
+                });
+
             modelBuilder.Entity("MotoApi.Models.Moto", b =>
                 {
                     b.Property<string>("Identificador")
