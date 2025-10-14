@@ -19,13 +19,12 @@ namespace MotoApi.Controllers
         }
 
         [HttpPost]
-        [ProducesResponseType(typeof(Locacao), 201)]
+        [ProducesResponseType(201)]
         [ProducesResponseType(typeof(ErrorResponseDto), 400)]
         [SwaggerOperation(
-            Summary = "Cria uma nova locação",
-            Description = "Registra uma nova locação de moto para um entregador"
+            Summary = "Cria uma nova locação"
         )]
-        [SwaggerResponse(201, "Locação criada com sucesso", typeof(Locacao))]
+        [SwaggerResponse(201, "Locação criada com sucesso")]
         [SwaggerResponse(400, "Dados inválidos", typeof(ErrorResponseDto))]
         public async Task<IActionResult> CreateLocacao([FromBody] CreateLocacaoRequest request)
         {
@@ -35,21 +34,8 @@ namespace MotoApi.Controllers
                 return BadRequest(new ErrorResponseDto { mensagem = "Dados inválidos" });
             }
 
-          
             if (string.IsNullOrEmpty(request.entregador_id) ||
                 string.IsNullOrEmpty(request.moto_id))
-            {
-                return BadRequest(new ErrorResponseDto { mensagem = "Dados inválidos" });
-            }
-
-          
-            if (request.plano <= 0)
-            {
-                return BadRequest(new ErrorResponseDto { mensagem = "Dados inválidos" });
-            }
-
-            if (request.data_previsao_termino < request.data_inicio ||
-                (request.data_termino.HasValue && request.data_termino.Value < request.data_inicio))
             {
                 return BadRequest(new ErrorResponseDto { mensagem = "Dados inválidos" });
             }
@@ -67,14 +53,18 @@ namespace MotoApi.Controllers
 
             try
             {
-                // Call the service to create the locacao
-                var createdLocacao = await _locacaoService.CreateLocacaoAsync(locacao);
                 
-                return Created($"/api/locacao/{createdLocacao.Identificador}", createdLocacao);
+                await _locacaoService.CreateLocacaoAsync(locacao);
+                
+                return StatusCode(201); // Retorna apenas status 201, sem corpo
             }
-            catch (Exception ex)
+            catch (ArgumentException)
             {
-                return BadRequest(new ErrorResponseDto { mensagem = $"Erro ao criar locação: {ex.Message}" });
+                return BadRequest(new ErrorResponseDto { mensagem = "Dados inválidos" });
+            }
+            catch (Exception)
+            {
+                return BadRequest(new ErrorResponseDto { mensagem = "Dados inválidos" });
             }
         }
     }

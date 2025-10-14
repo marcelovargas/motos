@@ -26,6 +26,11 @@ public class EntregadorRepository : IEntregadorRepository
         return await _context.Entregadores.FirstOrDefaultAsync(e => e.Identificador == id);
     }
 
+    public async Task<Entregador?> GetByIdAsync(string id)
+    {
+        return await _context.Entregadores.FirstOrDefaultAsync(e => e.Identificador == id);
+    }
+
     public async Task<bool> EntregadorExistsByCnpjAsync(string cnpj)
     {
         return await _context.Entregadores.AnyAsync(e => e.Cnpj == cnpj);
