@@ -1,0 +1,29 @@
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.5.2.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Moto", "Moto", "{5C777320-99B4-8A8A-665A-D77F18688E9F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MotoApi", "Moto\MotoApi\MotoApi.csproj", "{34AA7186-7B92-8B50-144E-CAA7F5096840}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{34AA7186-7B92-8B50-144E-CAA7F5096840}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{34AA7186-7B92-8B50-144E-CAA7F5096840}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{34AA7186-7B92-8B50-144E-CAA7F5096840}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{34AA7186-7B92-8B50-144E-CAA7F5096840}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{34AA7186-7B92-8B50-144E-CAA7F5096840} = {5C777320-99B4-8A8A-665A-D77F18688E9F}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {97E77968-22EA-4A78-990B-6C8D6A46C97E}
+	EndGlobalSection
+EndGlobal

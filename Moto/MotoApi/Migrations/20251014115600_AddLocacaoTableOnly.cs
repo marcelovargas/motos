@@ -6,11 +6,12 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace MotoApi.Migrations
 {
     /// <inheritdoc />
-    public partial class AddLocacaoEntity : Migration
+    public partial class AddLocacaoTableOnly : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            // Criar a tabela Locacoes
             migrationBuilder.CreateTable(
                 name: "Locacoes",
                 columns: table => new
@@ -26,6 +27,18 @@ namespace MotoApi.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Locacoes", x => x.Identificador);
+                    table.ForeignKey(
+                        name: "FK_Locacoes_Entregadores_EntregadorId",
+                        column: x => x.EntregadorId,
+                        principalTable: "Entregadores",
+                        principalColumn: "Identificador",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Locacoes_Motos_MotoId",
+                        column: x => x.MotoId,
+                        principalTable: "Motos",
+                        principalColumn: "Identificador",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
@@ -37,35 +50,11 @@ namespace MotoApi.Migrations
                 name: "IX_Locacoes_MotoId",
                 table: "Locacoes",
                 column: "MotoId");
-
-            migrationBuilder.AddForeignKey(
-                name: "FK_Locacoes_Entregadores_EntregadorId",
-                table: "Locacoes",
-                column: "EntregadorId",
-                principalTable: "Entregadores",
-                principalColumn: "Identificador",
-                onDelete: ReferentialAction.Cascade);
-
-            migrationBuilder.AddForeignKey(
-                name: "FK_Locacoes_Motos_MotoId",
-                table: "Locacoes",
-                column: "MotoId",
-                principalTable: "Motos",
-                principalColumn: "Identificador",
-                onDelete: ReferentialAction.Cascade);
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropForeignKey(
-                name: "FK_Locacoes_Entregadores_EntregadorId",
-                table: "Locacoes");
-
-            migrationBuilder.DropForeignKey(
-                name: "FK_Locacoes_Motos_MotoId",
-                table: "Locacoes");
-
             migrationBuilder.DropTable(
                 name: "Locacoes");
         }

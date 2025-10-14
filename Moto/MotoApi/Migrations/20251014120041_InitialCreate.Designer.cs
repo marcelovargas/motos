@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace MotoApi.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20251013165052_Ajustment")]
-    partial class Ajustment
+    [Migration("20251014120041_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -68,6 +68,47 @@ namespace MotoApi.Migrations
                     b.ToTable("Entregadores");
                 });
 
+            modelBuilder.Entity("MotoApi.Models.Locacao", b =>
+                {
+                    b.Property<string>("Identificador")
+                        .HasColumnType("varchar(50)")
+                        .HasAnnotation("Relational:JsonPropertyName", "identificador");
+
+                    b.Property<DateTime>("DataInicio")
+                        .HasColumnType("timestamp with time zone")
+                        .HasAnnotation("Relational:JsonPropertyName", "data_inicio");
+
+                    b.Property<DateTime>("DataPrevisaoTermino")
+                        .HasColumnType("timestamp with time zone")
+                        .HasAnnotation("Relational:JsonPropertyName", "data_previsao_termino");
+
+                    b.Property<DateTime?>("DataTermino")
+                        .HasColumnType("timestamp with time zone")
+                        .HasAnnotation("Relational:JsonPropertyName", "data_termino");
+
+                    b.Property<string>("EntregadorId")
+                        .IsRequired()
+                        .HasColumnType("varchar(50)")
+                        .HasAnnotation("Relational:JsonPropertyName", "entregador_id");
+
+                    b.Property<string>("MotoId")
+                        .IsRequired()
+                        .HasColumnType("varchar(50)")
+                        .HasAnnotation("Relational:JsonPropertyName", "moto_id");
+
+                    b.Property<int>("Plano")
+                        .HasColumnType("integer")
+                        .HasAnnotation("Relational:JsonPropertyName", "plano");
+
+                    b.HasKey("Identificador");
+
+                    b.HasIndex(new[] { "EntregadorId" }, "IX_Locacoes_EntregadorId");
+
+                    b.HasIndex(new[] { "MotoId" }, "IX_Locacoes_MotoId");
+
+                    b.ToTable("Locacoes");
+                });
+
             modelBuilder.Entity("MotoApi.Models.Moto", b =>
                 {
                     b.Property<string>("Identificador")
@@ -93,6 +134,35 @@ namespace MotoApi.Migrations
                         .IsUnique();
 
                     b.ToTable("Motos");
+                });
+
+            modelBuilder.Entity("MotoApi.Models.Locacao", b =>
+                {
+                    b.HasOne("MotoApi.Models.Entregador", "Entregador")
+                        .WithMany("Locacoes")
+                        .HasForeignKey("EntregadorId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("MotoApi.Models.Moto", "Moto")
+                        .WithMany("Locacoes")
+                        .HasForeignKey("MotoId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Entregador");
+
+                    b.Navigation("Moto");
+                });
+
+            modelBuilder.Entity("MotoApi.Models.Entregador", b =>
+                {
+                    b.Navigation("Locacoes");
+                });
+
+            modelBuilder.Entity("MotoApi.Models.Moto", b =>
+                {
+                    b.Navigation("Locacoes");
                 });
 #pragma warning restore 612, 618
         }
