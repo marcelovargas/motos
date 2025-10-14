@@ -23,12 +23,13 @@ namespace MotoApi.Controllers
         [ProducesResponseType(typeof(ErrorResponseDto), 400)]
         [SwaggerOperation(
             Summary = "Cria uma nova locação"
+           
         )]
         [SwaggerResponse(201, "Locação criada com sucesso")]
         [SwaggerResponse(400, "Dados inválidos", typeof(ErrorResponseDto))]
         public async Task<IActionResult> CreateLocacao([FromBody] CreateLocacaoRequest request)
         {
-            // Validate the input
+            
             if (request == null)
             {
                 return BadRequest(new ErrorResponseDto { mensagem = "Dados inválidos" });
@@ -61,6 +62,56 @@ namespace MotoApi.Controllers
             catch (ArgumentException)
             {
                 return BadRequest(new ErrorResponseDto { mensagem = "Dados inválidos" });
+            }
+            catch (Exception)
+            {
+                return BadRequest(new ErrorResponseDto { mensagem = "Dados inválidos" });
+            }
+        }
+
+        [HttpGet("{id}")]
+        [ProducesResponseType(typeof(GetLocacaoResponse), 200)]
+        [ProducesResponseType(typeof(ErrorResponseDto), 400)]
+        [ProducesResponseType(typeof(ErrorResponseDto), 404)]
+        [SwaggerOperation(
+            Summary = "Consulta uma locação por ID"
+        )]
+        [SwaggerResponse(200, "Locação encontrada", typeof(GetLocacaoResponse))]
+        [SwaggerResponse(400, "Dados inválidos", typeof(ErrorResponseDto))]
+        [SwaggerResponse(404, "Locação não encontrada", typeof(ErrorResponseDto))]
+        public async Task<IActionResult> GetLocacaoById(string id)
+        {
+            // Validate the input
+            if (string.IsNullOrEmpty(id))
+            {
+                return BadRequest(new ErrorResponseDto { mensagem = "Dados inválidos" });
+            }
+
+            try
+            {
+                var locacao = await _locacaoService.GetByIdAsync(id);
+                
+                if (locacao == null)
+                {
+                    return NotFound(new ErrorResponseDto { mensagem = "Locação não encontrada" });
+                }
+
+                // Determinar o valor diário com base no plano
+                var valorDiaria = PlanosLocacao.GetValorPorDia(locacao.Plano);
+
+                var response = new GetLocacaoResponse
+                {
+                    Identificador = locacao.Identificador,
+                    ValorDiaria = valorDiaria,
+                    EntregadorId = locacao.EntregadorId,
+                    MotoId = locacao.MotoId,
+                    DataInicio = locacao.DataInicio,
+                    DataTermino = locacao.DataTermino,
+                    DataPrevisaoTermino = locacao.DataPrevisaoTermino,
+                    DataDevolucao = locacao.DataTermino // Assumindo que a data de devolução é a mesma que a data de término
+                };
+
+                return Ok(response);
             }
             catch (Exception)
             {

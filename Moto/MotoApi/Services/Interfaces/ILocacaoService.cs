@@ -5,5 +5,6 @@ namespace MotoApi.Services.Interfaces
     public interface ILocacaoService
     {
         Task<Locacao> CreateLocacaoAsync(Locacao locacao);
+        Task<Locacao?> GetByIdAsync(string id);
     }
 }

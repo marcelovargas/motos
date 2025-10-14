@@ -31,5 +31,12 @@ namespace MotoApi.Repositories
                 .FirstOrDefaultAsync(l => l.Identificador == locacao.Identificador);
         }
 
+        public async Task<Locacao?> GetByIdAsync(string id)
+        {
+            return await _context.Locacoes
+                .Include(l => l.Entregador)
+                .Include(l => l.Moto)
+                .FirstOrDefaultAsync(l => l.Identificador == id);
+        }
     }
 }

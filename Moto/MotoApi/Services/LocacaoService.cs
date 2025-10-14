@@ -85,5 +85,10 @@ namespace MotoApi.Services
 
             return await _locacaoRepository.CreateLocacaoAsync(locacao);
         }
+
+        public async Task<Locacao?> GetByIdAsync(string id)
+        {
+            return await _locacaoRepository.GetByIdAsync(id);
+        }
     }
 }
