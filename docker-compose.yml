@@ -14,19 +14,37 @@ services:
       - zookeeper
     ports:
       - "9092:9092"
-    
     environment:
       KAFKA_ADVERTISED_LISTENERS: PLAINTEXT_HOST://localhost:9092,PLAINTEXT://kafka:29092
       KAFKA_LISTENERS: PLAINTEXT_HOST://0.0.0.0:9092,PLAINTEXT://0.0.0.0:29092
       KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-
     healthcheck:
       test: ["CMD", "bash", "-c", "echo > /dev/tcp/0.0.0.0/9092 || exit 1"]
       interval: 5s
       timeout: 5s
       retries: 12
+
+  kafka-init:
+    image: confluentinc/cp-kafka:7.7.0
+    depends_on:
+      kafka:
+        condition: service_healthy
+    entrypoint:
+      - /bin/sh
+      - -c
+      - |
+        echo "Esperando Kafka ficar pronto..."
+        for i in $(seq 1 30); do
+          kafka-topics --list --bootstrap-server kafka:29092 && break
+          echo "Kafka não pronto, esperando 2s..."
+          sleep 2
+        done
+        echo "Criando tópico moto-cadastrada..."
+        kafka-topics --create --topic moto-cadastrada --bootstrap-server kafka:29092 --partitions 1 --replication-factor 1 || true
+        echo "Tópico criado"
+    restart: "no"
 
   postgres:
     image: postgres:15
