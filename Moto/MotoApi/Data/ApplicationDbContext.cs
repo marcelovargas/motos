@@ -15,6 +15,7 @@ public partial class ApplicationDbContext : DbContext
     public virtual DbSet<Moto> Motos { get; set; }
     public virtual DbSet<Entregador> Entregadores { get; set; }
     public virtual DbSet<Locacao> Locacoes { get; set; }
+    public virtual DbSet<EventoMoto2024> EventosMoto2024 { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -63,6 +64,14 @@ public partial class ApplicationDbContext : DbContext
                 .WithMany(p => p.Locacoes)
                 .HasForeignKey(d => d.MotoId)
                 .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        modelBuilder.Entity<EventoMoto2024>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.Identificador).HasColumnType("varchar(50)");
+            entity.Property(e => e.Modelo).HasMaxLength(100);
+            entity.Property(e => e.Placa).HasMaxLength(8);
         });
 
         OnModelCreatingPartial(modelBuilder);

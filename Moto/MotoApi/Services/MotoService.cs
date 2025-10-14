@@ -2,16 +2,21 @@ using MotoApi.Models;
 using MotoApi.Repositories.Interfaces;
 using MotoApi.Services.Interfaces;
 using System.Linq.Expressions;
+using Microsoft.Extensions.Logging;
 
 namespace MotoApi.Services;
 
 public class MotoService : IMotoService
 {
     private readonly IMotoRepository _motoRepository;
+    private readonly IEventPublisher _eventPublisher;
+    private readonly ILogger<MotoService> _logger;
 
-    public MotoService(IMotoRepository motoRepository)
+    public MotoService(IMotoRepository motoRepository, IEventPublisher eventPublisher, ILogger<MotoService> logger)
     {
         _motoRepository = motoRepository;
+        _eventPublisher = eventPublisher;
+        _logger = logger;
     }
 
     public async Task<Moto> CreateMotoAsync(Moto moto)
@@ -22,7 +27,30 @@ public class MotoService : IMotoService
             throw new ArgumentException($"A moto with plate {moto.Placa} already exists.");
         }
 
-        return await _motoRepository.CreateMotoAsync(moto);
+        var createdMoto = await _motoRepository.CreateMotoAsync(moto);
+        
+        // Publicar evento de moto cadastrada
+        try
+        {
+            var evento = new MotoCadastradaEvent
+            {
+                Identificador = createdMoto.Identificador,
+                Ano = createdMoto.Ano,
+                Modelo = createdMoto.Modelo,
+                Placa = createdMoto.Placa,
+                DataRegistro = DateTime.UtcNow
+            };
+
+            await _eventPublisher.PublishMotoCadastradaAsync(evento);
+            _logger.LogInformation("Evento de moto cadastrada publicado para moto {Identificador}", createdMoto.Identificador);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Erro ao publicar evento de moto cadastrada para moto {Identificador}", createdMoto.Identificador);
+            // Não lançar exceção aqui para não comprometer o cadastro da moto
+        }
+
+        return createdMoto;
     }
 
     public async Task<Moto?> GetMotoByIdAsync(string id)

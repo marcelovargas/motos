@@ -4,12 +4,16 @@ using MotoApi.Repositories;
 using MotoApi.Repositories.Interfaces;
 using MotoApi.Services;
 using MotoApi.Services.Interfaces;
+using MotoApi.Configuration;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services.
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+// Register configuration
+builder.Services.Configure<KafkaConfiguration>(builder.Configuration.GetSection("Kafka"));
 
 // Register repository and service
 builder.Services.AddScoped<IMotoRepository, MotoRepository>();
@@ -19,6 +23,13 @@ builder.Services.AddScoped<IEntregadorService, EntregadorService>();
 builder.Services.AddScoped<ILocacaoRepository, LocacaoRepository>();
 builder.Services.AddScoped<ILocacaoService, LocacaoService>();
 builder.Services.AddScoped<IFileStorageService, FileStorageService>();
+
+// Register event publisher and consumer
+builder.Services.AddScoped<IEventPublisher, EventPublisher>();
+builder.Services.AddScoped<IEventConsumer, EventConsumer>();
+
+// Register Kafka consumer service
+builder.Services.AddHostedService<KafkaEventConsumerService>();
 
 builder.Services.AddControllers();
 
