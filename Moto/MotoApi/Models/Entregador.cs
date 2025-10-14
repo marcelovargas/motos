@@ -60,4 +60,9 @@ public class Entregador
     /// </summary>
     [Required]
     public string ImagemCnh { get; set; } = string.Empty;
+    
+    /// <summary>
+    /// Navigation property for locacoes
+    /// </summary>
+    public virtual ICollection<Locacao> Locacoes { get; set; } = new List<Locacao>();
 }

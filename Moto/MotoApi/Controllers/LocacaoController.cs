@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using MotoApi.DTOs.Request;
 using MotoApi.DTOs.Response;
 using MotoApi.Models;
 using MotoApi.Services.Interfaces;
@@ -26,44 +27,54 @@ namespace MotoApi.Controllers
         )]
         [SwaggerResponse(201, "Locação criada com sucesso", typeof(Locacao))]
         [SwaggerResponse(400, "Dados inválidos", typeof(ErrorResponseDto))]
-        public async Task<IActionResult> CreateLocacao([FromBody] Locacao locacao)
+        public async Task<IActionResult> CreateLocacao([FromBody] CreateLocacaoRequest request)
         {
             // Validate the input
-            if (locacao == null)
+            if (request == null)
             {
                 return BadRequest(new ErrorResponseDto { mensagem = "Dados inválidos" });
             }
+
+          
+            if (string.IsNullOrEmpty(request.entregador_id) ||
+                string.IsNullOrEmpty(request.moto_id))
+            {
+                return BadRequest(new ErrorResponseDto { mensagem = "Dados inválidos" });
+            }
+
+          
+            if (request.plano <= 0)
+            {
+                return BadRequest(new ErrorResponseDto { mensagem = "Dados inválidos" });
+            }
+
+            if (request.data_previsao_termino < request.data_inicio ||
+                (request.data_termino.HasValue && request.data_termino.Value < request.data_inicio))
+            {
+                return BadRequest(new ErrorResponseDto { mensagem = "Dados inválidos" });
+            }
+
+            // Map the DTO to the model
+            var locacao = new Locacao
+            {
+                EntregadorId = request.entregador_id,
+                MotoId = request.moto_id,
+                DataInicio = request.data_inicio,
+                DataTermino = request.data_termino,
+                DataPrevisaoTermino = request.data_previsao_termino,
+                Plano = request.plano
+            };
 
             try
             {
-                // Validate required fields
-                if (string.IsNullOrEmpty(locacao.EntregadorId) ||
-                    string.IsNullOrEmpty(locacao.MotoId))
-                {
-                    return BadRequest(new ErrorResponseDto { mensagem = "Dados inválidos" });
-                }
-
-                // Validate plan
-                if (locacao.Plano <= 0)
-                {
-                    return BadRequest(new ErrorResponseDto { mensagem = "Dados inválidos" });
-                }
-
-                // Validate dates
-                if (locacao.DataPrevisaoTermino < locacao.DataInicio ||
-                    locacao.DataTermino < locacao.DataInicio)
-                {
-                    return BadRequest(new ErrorResponseDto { mensagem = "Dados inválidos" });
-                }
-
                 // Call the service to create the locacao
                 var createdLocacao = await _locacaoService.CreateLocacaoAsync(locacao);
                 
-                return Created($"/api/locacao/{createdLocacao.EntregadorId}-{createdLocacao.MotoId}", createdLocacao);
+                return Created($"/api/locacao/{createdLocacao.Identificador}", createdLocacao);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                return BadRequest(new ErrorResponseDto { mensagem = "Dados inválidos" });
+                return BadRequest(new ErrorResponseDto { mensagem = $"Erro ao criar locação: {ex.Message}" });
             }
         }
     }

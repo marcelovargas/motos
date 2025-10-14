@@ -40,4 +40,9 @@ public class Moto
         ErrorMessage = "License plate must follow format: 3 letters + hyphen + 4 numbers (AAA-1111) or 3 letters + hyphen + number + letter + 2 numbers (AAA-1A11)")]
     [JsonPropertyName("placa")]
     public string Placa { get; set; } = string.Empty;
+    
+    /// <summary>
+    /// Navigation property for locacoes
+    /// </summary>
+    public virtual ICollection<Locacao> Locacoes { get; set; } = new List<Locacao>();
 }

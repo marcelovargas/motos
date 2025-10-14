@@ -14,6 +14,7 @@ public partial class ApplicationDbContext : DbContext
     
     public virtual DbSet<Moto> Motos { get; set; }
     public virtual DbSet<Entregador> Entregadores { get; set; }
+    public virtual DbSet<Locacao> Locacoes { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -40,6 +41,28 @@ public partial class ApplicationDbContext : DbContext
             entity.Property(e => e.Cnpj).HasMaxLength(14);
             entity.Property(e => e.NumeroCnh).HasMaxLength(20);
             entity.Property(e => e.TipoCnh).HasMaxLength(3);
+        });
+
+        modelBuilder.Entity<Locacao>(entity =>
+        {
+            entity.HasKey(e => e.Identificador);
+
+            entity.HasIndex(e => e.EntregadorId, "IX_Locacoes_EntregadorId");
+            entity.HasIndex(e => e.MotoId, "IX_Locacoes_MotoId");
+
+            entity.Property(e => e.Identificador).HasColumnType("varchar(50)");
+            entity.Property(e => e.EntregadorId).HasColumnType("varchar(50)");
+            entity.Property(e => e.MotoId).HasColumnType("varchar(50)");
+
+            entity.HasOne(d => d.Entregador)
+                .WithMany(p => p.Locacoes)
+                .HasForeignKey(d => d.EntregadorId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasOne(d => d.Moto)
+                .WithMany(p => p.Locacoes)
+                .HasForeignKey(d => d.MotoId)
+                .OnDelete(DeleteBehavior.Cascade);
         });
 
         OnModelCreatingPartial(modelBuilder);
