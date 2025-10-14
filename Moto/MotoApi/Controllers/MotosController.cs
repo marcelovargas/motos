@@ -18,24 +18,33 @@ namespace MotoApi.Controllers
 
 
         [HttpPost]
-        [ProducesResponseType(typeof(Moto), 201)]
+        [ProducesResponseType(typeof(DTOs.Response.MotoDetailsResponseDto), 201)]
         [ProducesResponseType(typeof(DTOs.Response.ErrorResponseDto), 400)]
         [SwaggerOperation(
             Summary = "Cria uma nova moto",
             Description = "Adiciona uma nova moto ao sistema com os dados fornecidos"
         )]
-        [SwaggerResponse(201, "Moto criada com sucesso", typeof(Moto))]
+        [SwaggerResponse(201, "Moto criada com sucesso", typeof(DTOs.Response.MotoDetailsResponseDto))]
         [SwaggerResponse(400, "Dados inválidos", typeof(DTOs.Response.ErrorResponseDto))]
-        public async Task<IActionResult> CreateMoto(Moto moto)
+        public async Task<IActionResult> CreateMoto([FromBody] DTOs.Request.CreateMotoRequest request)
         {
             // Validate the input
-            if (moto == null)
+            if (request == null)
             {
                 return BadRequest(new DTOs.Response.ErrorResponseDto { mensagem = "Dados inválidos" });
             }
 
             try
             {
+                // Convert DTO to Moto model
+                var moto = new Moto
+                {
+                    Identificador = request.Identificador,
+                    Ano = request.Ano,
+                    Modelo = request.Modelo,
+                    Placa = request.Placa
+                };
+
                 // Validate model state
                 if (!ModelState.IsValid)
                 {
@@ -43,7 +52,17 @@ namespace MotoApi.Controllers
                 }
 
                 var createdMoto = await _motoService.CreateMotoAsync(moto);
-                return CreatedAtAction(nameof(GetMotoById), new { id = createdMoto.Identificador }, createdMoto);
+                
+                // Convert created moto to DTO for response without locacoes
+                var motoDto = new DTOs.Response.MotoDetailsResponseDto
+                {
+                    Identificador = createdMoto.Identificador,
+                    Ano = createdMoto.Ano,
+                    Modelo = createdMoto.Modelo,
+                    Placa = createdMoto.Placa
+                };
+                
+                return CreatedAtAction(nameof(GetMotoById), new { id = createdMoto.Identificador }, motoDto);
             }
             catch (ArgumentException)
             {
@@ -57,16 +76,16 @@ namespace MotoApi.Controllers
 
 
         [HttpGet("{id}")]
-        [ProducesResponseType(typeof(Moto), 200)]
+        [ProducesResponseType(typeof(DTOs.Response.MotoDetailsResponseDto), 200)]
         [ProducesResponseType(typeof(DTOs.Response.ErrorResponseDto), 400)]
         [ProducesResponseType(typeof(DTOs.Response.ErrorResponseDto), 404)]
         [SwaggerOperation(
             Summary = "Busca moto por identificador"
                     )]
-        [SwaggerResponse(200, "Moto encontrada", typeof(Moto))]
+        [SwaggerResponse(200, "Moto encontrada", typeof(DTOs.Response.MotoDetailsResponseDto))]
         [SwaggerResponse(400, "Request mal formada", typeof(DTOs.Response.ErrorResponseDto))]
         [SwaggerResponse(404, "Moto não encontrada", typeof(DTOs.Response.ErrorResponseDto))]
-        public async Task<ActionResult<Moto>> GetMotoById(string id)
+        public async Task<ActionResult<DTOs.Response.MotoDetailsResponseDto>> GetMotoById(string id)
         {
             if (string.IsNullOrEmpty(id))
             {
@@ -80,25 +99,43 @@ namespace MotoApi.Controllers
                 return NotFound(new DTOs.Response.ErrorResponseDto { mensagem = "Moto não encontrada" });
             }
 
-            return moto;
+            // Convert Moto model to DTO without locacoes
+            var motoDto = new DTOs.Response.MotoDetailsResponseDto
+            {
+                Identificador = moto.Identificador,
+                Ano = moto.Ano,
+                Modelo = moto.Modelo,
+                Placa = moto.Placa
+            };
+
+            return motoDto;
         }
 
 
         [HttpGet]
-        [ProducesResponseType(typeof(IEnumerable<Moto>), 200)]
+        [ProducesResponseType(typeof(IEnumerable<DTOs.Response.MotoDetailsResponseDto>), 200)]
         [ProducesResponseType(typeof(DTOs.Response.ErrorResponseDto), 400)]
         [SwaggerOperation(
-            Summary = "Consulta motos existentes",
-            Description = "Retorna uma lista de motos, com opção de filtrar pela placa"
+            Summary = "Consulta motos existentes"
         )]
-        [SwaggerResponse(200, "Lista de motos retornada com sucesso", typeof(IEnumerable<Moto>))]
+        [SwaggerResponse(200, "Lista de motos retornada com sucesso", typeof(IEnumerable<DTOs.Response.MotoDetailsResponseDto>))]
         [SwaggerResponse(400, "Request mal formada", typeof(DTOs.Response.ErrorResponseDto))]
-        public async Task<ActionResult<IEnumerable<Moto>>> GetMotos([FromQuery] string? placa = null)
+        public async Task<ActionResult<IEnumerable<DTOs.Response.MotoDetailsResponseDto>>> GetMotos([FromQuery] string? placa = null)
         {
             try
             {
                 var motos = await _motoService.GetMotosAsync(placa);
-                return Ok(motos);
+                
+                // Convert each Moto to MotoDetailsResponseDto to exclude locacoes
+                var motosDto = motos.Select(m => new DTOs.Response.MotoDetailsResponseDto
+                {
+                    Identificador = m.Identificador,
+                    Ano = m.Ano,
+                    Modelo = m.Modelo,
+                    Placa = m.Placa
+                });
+                
+                return Ok(motosDto);
             }
             catch (Exception)
             {
@@ -111,8 +148,8 @@ namespace MotoApi.Controllers
         [ProducesResponseType(typeof(DTOs.Response.ErrorResponseDto), 200)]
         [ProducesResponseType(typeof(DTOs.Response.ErrorResponseDto), 400)]
         [SwaggerOperation(
-            Summary = "Elimina uma moto",
-            Description = "Remove uma moto existente pelo identificador"
+            Summary = "Elimina uma moto"
+          
         )]
         [SwaggerResponse(200, "Moto eliminada com sucesso", typeof(DTOs.Response.ErrorResponseDto))]
         [SwaggerResponse(400, "Dados inválidos", typeof(DTOs.Response.ErrorResponseDto))]
