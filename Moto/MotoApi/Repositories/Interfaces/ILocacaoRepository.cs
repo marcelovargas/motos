@@ -6,5 +6,6 @@ namespace MotoApi.Repositories.Interfaces
     {
         Task<Locacao> CreateLocacaoAsync(Locacao locacao);
         Task<Locacao?> GetByIdAsync(string id);
+        Task<bool> UpdateDataTerminoAsync(string id, DateTime dataTermino);
     }
 }

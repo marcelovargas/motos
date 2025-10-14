@@ -38,5 +38,18 @@ namespace MotoApi.Repositories
                 .Include(l => l.Moto)
                 .FirstOrDefaultAsync(l => l.Identificador == id);
         }
+
+        public async Task<bool> UpdateDataTerminoAsync(string id, DateTime dataTermino)
+        {
+            var locacao = await _context.Locacoes.FirstOrDefaultAsync(l => l.Identificador == id);
+            if (locacao == null)
+            {
+                return false;
+            }
+
+            locacao.DataTermino = dataTermino;
+            var result = await _context.SaveChangesAsync();
+            return result > 0;
+        }
     }
 }

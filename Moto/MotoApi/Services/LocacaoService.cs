@@ -90,5 +90,41 @@ namespace MotoApi.Services
         {
             return await _locacaoRepository.GetByIdAsync(id);
         }
+
+        public async Task<(bool success, decimal valorTotal, string? error)> ProcessarDevolucaoAsync(string id, DateTime dataDevolucao)
+        {
+            try
+            {
+                var locacao = await _locacaoRepository.GetByIdAsync(id);
+                
+                if (locacao == null)
+                {
+                    return (false, 0, "Locação não encontrada");
+                }
+
+                // Verificar se a data de devolução é válida (não pode ser antes da data de início)
+                if (dataDevolucao.Date < locacao.DataInicio.Date)
+                {
+                    return (false, 0, "Data de devolução inválida");
+                }
+
+                // Calcular o valor total da locação
+                var valorTotal = locacao.CalcularValorTotal(dataDevolucao);
+
+                // Atualizar a data de término da locação
+                var atualizacaoSucesso = await _locacaoRepository.UpdateDataTerminoAsync(id, dataDevolucao);
+
+                if (!atualizacaoSucesso)
+                {
+                    return (false, 0, "Erro ao atualizar a data de término da locação");
+                }
+
+                return (true, valorTotal, null);
+            }
+            catch (Exception ex)
+            {
+                return (false, 0, ex.Message);
+            }
+        }
     }
 }

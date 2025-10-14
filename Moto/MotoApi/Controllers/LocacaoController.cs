@@ -81,7 +81,7 @@ namespace MotoApi.Controllers
         [SwaggerResponse(404, "Locação não encontrada", typeof(ErrorResponseDto))]
         public async Task<IActionResult> GetLocacaoById(string id)
         {
-            // Validate the input
+            
             if (string.IsNullOrEmpty(id))
             {
                 return BadRequest(new ErrorResponseDto { mensagem = "Dados inválidos" });
@@ -96,7 +96,7 @@ namespace MotoApi.Controllers
                     return NotFound(new ErrorResponseDto { mensagem = "Locação não encontrada" });
                 }
 
-                // Determinar o valor diário com base no plano
+             
                 var valorDiaria = PlanosLocacao.GetValorPorDia(locacao.Plano);
 
                 var response = new GetLocacaoResponse
@@ -112,6 +112,40 @@ namespace MotoApi.Controllers
                 };
 
                 return Ok(response);
+            }
+            catch (Exception)
+            {
+                return BadRequest(new ErrorResponseDto { mensagem = "Dados inválidos" });
+            }
+        }
+
+        [HttpPut("{id}/devolucao")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(typeof(ErrorResponseDto), 400)]
+        [SwaggerOperation(
+            Summary = "Informar data de devolução e calcular valor",
+            Description = "Como entregador quero informar a data que irei devolver a moto e consultar o valor total da locação"
+        )]
+        [SwaggerResponse(200, "Devolução processada com sucesso")]
+        [SwaggerResponse(400, "Dados inválidos", typeof(ErrorResponseDto))]
+        public async Task<IActionResult> ProcessarDevolucao(string id, [FromBody] DevolucaoLocacaoRequest request)
+        {
+            
+            if (string.IsNullOrEmpty(id) || request == null)
+            {
+                return BadRequest(new ErrorResponseDto { mensagem = "Dados inválidos" });
+            }
+
+            try
+            {
+                var (success, valorTotal, error) = await _locacaoService.ProcessarDevolucaoAsync(id, request.data_devolucao);
+                
+                if (!success)
+                {
+                    return BadRequest(new ErrorResponseDto { mensagem = "Dados inválidos" });
+                }
+
+                return Ok(); // Retorna 200 OK se tudo correr bem
             }
             catch (Exception)
             {
