@@ -100,6 +100,19 @@ public class MotoService : IMotoService
             throw new ArgumentException("Invalid identifier");
         }
 
+
+        var moto = await _motoRepository.GetMotoByIdAsync(id);
+        if (moto == null)
+        {
+            throw new ArgumentException("Moto não encontrada");
+        }
+
+
+        if (moto.Locacoes != null && moto.Locacoes.Any())
+        {
+            throw new InvalidOperationException("Não é possível remover uma moto que possui locações registradas");
+        }
+
         return await _motoRepository.DeleteMotoAsync(id);
     }
 }

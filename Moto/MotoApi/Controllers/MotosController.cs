@@ -140,6 +140,10 @@ namespace MotoApi.Controllers
             {
                 return BadRequest(new DTOs.Response.ErrorResponseDto { mensagem = "Dados inválidos" });
             }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(new DTOs.Response.ErrorResponseDto { mensagem = ex.Message });
+            }
             catch
             {
                 return BadRequest(new DTOs.Response.ErrorResponseDto { mensagem = "Dados inválidos" });
