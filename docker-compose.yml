@@ -35,16 +35,12 @@ services:
       - /bin/sh
       - -c
       - |
-        echo "Esperando Kafka ficar pronto..."
+        echo "Esperando Kafka...";
         for i in $(seq 1 30); do
           kafka-topics --list --bootstrap-server kafka:29092 && break
-          echo "Kafka não pronto, esperando 2s..."
           sleep 2
         done
-        echo "Criando tópico moto-cadastrada..."
         kafka-topics --create --topic moto-cadastrada --bootstrap-server kafka:29092 --partitions 1 --replication-factor 1 || true
-        echo "Tópico criado"
-    restart: "no"
 
   postgres:
     image: postgres:15
@@ -56,29 +52,53 @@ services:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U admin -d MotosDB"]
+      interval: 5s
+      timeout: 5s
+      retries: 10 
+  
+  moto-api-migrate:
+    build:
+      context: .
+      dockerfile: Dockerfile-migrate
+    environment:
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: 5432
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin123
+      ConnectionStrings__DefaultConnection: Host=postgres;Port=5432;Database=MotosDB;Username=admin;Password=admin123;
+      MIGRATION_ONLY: "true"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: "no"
+
+  
 
   moto-api:
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile-api
     depends_on:
+     
       kafka:
         condition: service_healthy
       postgres:
-        condition: service_started
+        condition: service_healthy
+      moto-api-migrate:
+        condition: service_completed_successfully
     ports:
-      - "5000:80"
+      - "5000:8080"
     environment:
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: 5432
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin123
       ASPNETCORE_ENVIRONMENT: Development
       Kafka__BootstrapServers: kafka:29092
       ConnectionStrings__DefaultConnection: Host=postgres;Port=5432;Database=MotosDB;Username=admin;Password=admin123;
-    command: >
-      /bin/sh -c "
-        dotnet restore &&
-        dotnet build &&
-        dotnet ef database update &&
-        dotnet run --urls=http://0.0.0.0:80
-      "
+    
 
 volumes:
   postgres_data:

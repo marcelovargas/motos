@@ -29,7 +29,12 @@ builder.Services.AddScoped<IEventPublisher, EventPublisher>();
 builder.Services.AddScoped<IEventConsumer, EventConsumer>();
 
 // Register Kafka consumer service
-builder.Services.AddHostedService<KafkaEventConsumerService>();
+// Only start Kafka consumer if not in migration mode
+var migrationOnly = Environment.GetEnvironmentVariable("MIGRATION_ONLY") == "true";
+if (!migrationOnly)
+{
+    builder.Services.AddHostedService<KafkaEventConsumerService>();
+}
 
 builder.Services.AddControllers();
 
@@ -60,11 +65,7 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
-    app.UseSwaggerUI(c =>
-    {
-        c.SwaggerEndpoint("/swagger/v1/swagger.json", "Moto API v1");
-        c.RoutePrefix = "swagger"; 
-    });
+    app.UseSwaggerUI();
 }
 
 app.UseHttpsRedirection();

@@ -1,0 +1,15 @@
+FROM mcr.microsoft.com/dotnet/sdk:9.0
+WORKDIR /app
+
+# Instala pg_isready
+RUN apt-get update && apt-get install -y postgresql-client && rm -rf /var/lib/apt/lists/*
+
+# Instala dotnet-ef
+RUN dotnet tool install --global dotnet-ef
+ENV PATH="$PATH:/root/.dotnet/tools"
+
+COPY . /src
+COPY entrypoint-migrate.sh /app/entrypoint-migrate.sh
+RUN chmod +x /app/entrypoint-migrate.sh
+
+ENTRYPOINT ["/app/entrypoint-migrate.sh"]

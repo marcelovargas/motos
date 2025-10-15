@@ -5,10 +5,11 @@ COPY ["Moto/MotoApi/MotoApi.csproj", "Moto/MotoApi/"]
 RUN dotnet restore "Moto/MotoApi/MotoApi.csproj"
 COPY . .
 WORKDIR "/src/Moto/MotoApi"
-RUN dotnet publish "MotoApi.csproj" -c Release -o /app/publish
+RUN dotnet publish "MotoApi.csproj" -c Release -o /app
 
-# Etapa de execução
-FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS runtime
+# Etapa final da API
+FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS final
 WORKDIR /app
-COPY --from=build /app/publish .
+COPY --from=build /app /app
+EXPOSE 8080
 ENTRYPOINT ["dotnet", "MotoApi.dll"]
