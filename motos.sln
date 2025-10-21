@@ -1,10 +1,24 @@
+﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
-VisualStudioVersion = 17.5.2.0
+# Visual Studio Version 18
+VisualStudioVersion = 18.0.11116.177 d18.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Moto", "Moto", "{5C777320-99B4-8A8A-665A-D77F18688E9F}"
+	ProjectSection(SolutionItems) = preProject
+		docker-compose.yml = docker-compose.yml
+		Dockerfile-api = Dockerfile-api
+		Dockerfile-migrate = Dockerfile-migrate
+		entrypoint-migrate.sh = entrypoint-migrate.sh
+		README.md = README.md
+		README2.md = README2.md
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MotoApi", "Moto\MotoApi\MotoApi.csproj", "{34AA7186-7B92-8B50-144E-CAA7F5096840}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Itens de Solução", "Itens de Solução", "{2647767C-57A2-4699-B25F-1E2B2623BF46}"
+	ProjectSection(SolutionItems) = preProject
+		.gitignore = .gitignore
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
